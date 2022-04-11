@@ -1,6 +1,8 @@
 # viber
 Vibes with games at specified times.
 
+Requires [ArduinoJoystickLibrary](https://github.com/MHeironimus/ArduinoJoystickLibrary) and [U8glib](https://www.arduino.cc/reference/en/libraries/u8glib/).
+
 ## Instructions
 For chart replay mode:
 
