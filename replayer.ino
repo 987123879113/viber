@@ -33,6 +33,7 @@ void resetInputs()
   Joystick.setButton(1, arrowState[1]);
   Joystick.setButton(2, arrowState[2]);
   Joystick.setButton(3, arrowState[3]);
+  Joystick.sendState();
 
   digitalWrite(JAMMA_LEFT, arrowState[0] ? LOW : HIGH);
   digitalWrite(JAMMA_DOWN, arrowState[1] ? LOW : HIGH);
@@ -84,11 +85,14 @@ void updateScreenChartReplay()
 
 void updateButtonStateChartReplay()
 {
+  bool updateButtons = false;
+
   if (playbackState == PLAYBACK_STOPPED) {
     if (buttonHeldState[2]) {
       if (buttonPressedDuration[2] > 500000UL) {
         // Start chart
         playbackState = PLAYBACK_PRIMED;
+        updateButtons = true;
       }
     } else if (buttonIsPressedNow[1]) {
       chartCursor -= 1;
@@ -102,7 +106,6 @@ void updateButtonStateChartReplay()
       loadChart();
     }
   } else if (playbackState == PLAYBACK_PRIMED || playbackState == PLAYBACK_STARTED) {
-    bool updateButtons = false;
     if (buttonIsPressedNow[2]) {
       // Stop
       playbackState = PLAYBACK_STOPPED;
@@ -116,16 +119,17 @@ void updateButtonStateChartReplay()
       timeSyncPressed = true;
     } else if (timeSyncPressed && !buttonIsPressed[0]) {
       playbackState = PLAYBACK_STARTED;
-      updateScreenChartReplay();
-      curChartEventIdx = 0;
+      //updateScreenChartReplay(); // Slow
+      updateButtons = true;
       loadChart();
+      curChartEventIdx = 0;
       timeBeat = micros();
       timeSyncPressed = false;
     }
+  }
 
-    if (updateButtons) {
-      resetInputs();
-    }
+  if (updateButtons) {
+    resetInputs();
   }
 }
 
